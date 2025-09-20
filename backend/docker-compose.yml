@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: dt_money_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dt_money
+      POSTGRES_USER: dt_money_user
+      POSTGRES_PASSWORD: dt_money_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "6789:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - dt_money_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dt_money_user -d dt_money"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  dt_money_network:
+    driver: bridge
