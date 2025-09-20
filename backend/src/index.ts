@@ -6,6 +6,7 @@ import { swaggerConfig } from "@/config/swagger";
 import { loggerMiddleware, logger } from "@/middlewares/logger";
 import { errorHandler } from "@/middlewares/error-handler";
 import { healthRoutes } from "@/routes/health";
+import { betterAuth } from "./middlewares/better-auth";
 
 const app = new Elysia()
   .use(
@@ -22,6 +23,7 @@ const app = new Elysia()
       ],
     }),
   )
+  .use(betterAuth)
   .use(swagger(swaggerConfig))
   .use(loggerMiddleware)
   .use(errorHandler)
@@ -33,6 +35,13 @@ const app = new Elysia()
       tags: ["Health"],
     },
   })
+  .get(
+    "/logado",
+    ({ user }) => ({ message: "Você está logado! " + user.name }),
+    {
+      auth: true,
+    },
+  )
   .listen({
     port: env.PORT,
     hostname: "0.0.0.0",

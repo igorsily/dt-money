@@ -1,3 +1,5 @@
+import { OpenAPI } from "@/middlewares/better-auth";
+
 export const swaggerConfig = {
   documentation: {
     info: {
@@ -12,6 +14,9 @@ export const swaggerConfig = {
         description: "Development server",
       },
     ],
+
+    components: await OpenAPI.components,
+    paths: await OpenAPI.getPaths(),
   },
   swaggerOptions: {
     persistAuthorization: true,
