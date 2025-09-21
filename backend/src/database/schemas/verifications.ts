@@ -1,10 +1,9 @@
-import { randomUUIDv7 } from "bun";
-import { pgTable, text, timestamp, boolean, uuid } from "drizzle-orm/pg-core";
+import { uuidv7 } from "uuidv7";import { pgTable, text, timestamp, boolean, uuid } from "drizzle-orm/pg-core";
 
 export const verifications = pgTable("verifications", {
   id: uuid("id")
     .primaryKey()
-    .$defaultFn(() => randomUUIDv7()),
+    .$defaultFn(() => uuidv7()),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),

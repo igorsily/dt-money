@@ -1,10 +1,10 @@
 import { pgTable, text, timestamp, boolean, uuid } from "drizzle-orm/pg-core";
 import { users } from "./users";
-import { randomUUIDv7 } from "bun";
+import { uuidv7 } from "uuidv7";
 export const accounts = pgTable("accounts", {
   id: uuid("id")
     .primaryKey()
-    .$defaultFn(() => randomUUIDv7()),
+    .$defaultFn(() => uuidv7()),
   accountId: uuid("account_id").notNull(),
   providerId: text("provider_id").notNull(),
   userId: uuid("user_id")
