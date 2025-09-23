@@ -1,11 +1,11 @@
 import { db } from "@/database/connection";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { openAPI } from "better-auth/plugins";
+import { bearer, openAPI } from "better-auth/plugins";
 
 export const auth = betterAuth({
   basePath: "/auth",
-  plugins: [openAPI()],
+  plugins: [openAPI(), bearer()],
   database: drizzleAdapter(db, {
     provider: "pg",
     usePlural: true,
@@ -22,12 +22,5 @@ export const auth = betterAuth({
       hash: (password: string) => Bun.password.hash(password),
       verify: ({ password, hash }) => Bun.password.verify(password, hash),
     },
-  },
-  session: {
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    cookieCache: {
-      enabled: true,
-      maxAge: 60 * 5, // 5 minutes
-    },
-  },
+  }
 });
