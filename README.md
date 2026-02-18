@@ -15,7 +15,7 @@ graph TD
     User((Cliente / Usuário)):::client
 
     %% AWS Cloud Boundary
-    subgraph AWS_Cloud [AWS Cloud (Region)]
+    subgraph AWS_Cloud [AWS Cloud - Region]
         
         %% DNS e CDN
         R53[Amazon Route 53<br/>(DNS)]:::aws
