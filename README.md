@@ -6,64 +6,45 @@ Este documento detalha a arquitetura de referência para deployments de alta esc
 
 ```mermaid
 graph TD
-    %% Estilos e Temas
+
     classDef aws fill:#FF9900,stroke:#232F3E,stroke-width:2px,color:white;
     classDef client fill:#3F8624,stroke:#232F3E,stroke-width:2px,color:white;
     classDef database fill:#3B48CC,stroke:#232F3E,stroke-width:2px,color:white;
-    
-    %% Usuário Externo
-    User((Cliente / Usuário)):::client
 
-    %% AWS Cloud Boundary
-    subgraph AWS_Cloud [AWS Cloud - Region]
-        
-        %% DNS e CDN
-        R53[Amazon Route 53\n(DNS)]:::aws
-        CF[Amazon CloudFront\n(CDN Global)]:::aws
-        
-        %% Frontend Storage
-        S3_Bucket[Amazon S3\n(Frontend Build Estático)]:::aws
+    User((Cliente)):::client
 
-        %% Networking VPC
-        subgraph VPC [VPC]
-            
-            %% Public Subnet
-            subgraph Public_Subnet [Public Subnet]
-                ALB[Application Load Balancer<br/>(Ingress Controller)]:::aws
+    subgraph AWS
+        R53[Route53 DNS]:::aws
+        CF[CloudFront CDN]:::aws
+        S3[S3 Frontend]:::aws
+
+        subgraph VPC
+            ALB[Load Balancer]:::aws
+
+            subgraph ECS
+                Task1[API Container 1]
+                Task2[API Container 2]
             end
-            
-            %% Private Subnet (App & Data)
-            subgraph Private_Subnet [Private Subnet]
-                %% Backend Service
-                subgraph Fargate_Cluster [ECS Fargate Cluster]
-                    Task1[Container: API (Bun + Elysia)]
-                    Task2[Container: API (Bun + Elysia)]
-                end
-                
-                %% Data Persistence
-                RDS[(Amazon RDS<br/>PostgreSQL + PostGIS)]:::database
-                Redis[(Amazon ElastiCache<br/>Redis - Sessões/Cache)]:::database
-            end
+
+            RDS[(RDS PostgreSQL)]:::database
+            Redis[(ElastiCache Redis)]:::database
         end
     end
 
-    %% Fluxos de Conexão
-    User -- "1. Resolução DNS" --> R53
-    
-    User -- "2. Acesso Frontend (HTTPS)" --> CF
-    CF -- "Cache Miss / Origin" --> S3_Bucket
+    User --> R53
+    User --> CF
+    CF --> S3
+    User --> ALB
 
-    User -- "3. Chamadas de API (HTTPS)" --> ALB
-    
-    %% Roteamento Interno
-    ALB -- "Round Robin / Health Check" --> Task1
-    ALB -- "Round Robin / Health Check" --> Task2
-    
-    %% Comunicação Backend -> Dados
-    Task1 & Task2 --> RDS
-    Task1 & Task2 --> Redis
-    
+    ALB --> Task1
+    ALB --> Task2
+
+    Task1 --> RDS
+    Task2 --> RDS
+    Task1 --> Redis
+    Task2 --> Redis
 ```
+
 
 ## Componentes Chave
 
