@@ -18,11 +18,11 @@ graph TD
     subgraph AWS_Cloud [AWS Cloud - Region]
         
         %% DNS e CDN
-        R53[Amazon Route 53<br/>(DNS)]:::aws
-        CF[Amazon CloudFront<br/>(CDN Global)]:::aws
+        R53[Amazon Route 53\n(DNS)]:::aws
+        CF[Amazon CloudFront\n(CDN Global)]:::aws
         
         %% Frontend Storage
-        S3_Bucket[Amazon S3<br/>(Frontend Build Estático)]:::aws
+        S3_Bucket[Amazon S3\n(Frontend Build Estático)]:::aws
 
         %% Networking VPC
         subgraph VPC [VPC]
